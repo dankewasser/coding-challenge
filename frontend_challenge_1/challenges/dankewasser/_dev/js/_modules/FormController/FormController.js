@@ -24,45 +24,14 @@ export default {
         pref: formSelectTable.providerToPref,
       },
       /**
-       * 送信する値
+       * フィールドの一覧
+       * todo: 同名フィールドが誤って複数登録されている場合のエラーハンドリングがあってもいい
        */
-      sendValues: {
-        provider: 'tepco',
-        pref: '',
-        company: '',
-        name: '',
-        phone: '',
-        email: '',
-      },
+      inputFields: [],
       /**
-       * 各フィールドのバリデーション結果
+       * 送信中かどうか
        */
-      validateStatus: {
-        provider: {
-          validateType: 'text',
-          isValid: true,
-        },
-        pref: {
-          validateType: 'text',
-          isValid: true,
-        },
-        company: {
-          validateType: 'text',
-          isValid: true,
-        },
-        name: {
-          validateType: 'text',
-          isValid: true,
-        },
-        phone: {
-          validateType: 'text',
-          isValid: true,
-        },
-        email: {
-          validateType: 'email',
-          isValid: true,
-        },
-      },
+      isSending: false,
     };
   },
   computed: {
@@ -78,23 +47,20 @@ export default {
      * @returns {{name: string, value: string}[]}
      */
     getPrefList() {
+      const currentProvider =
+        this.$refs.provider && this.$refs.provider.currentValue ? this.$refs.provider.currentValue : 'tepco';
+      const newList = this.selectList.pref[currentProvider] ? this.selectList.pref[currentProvider].pref : [];
       return [
         {
           name: 'お選びください',
           value: '',
         },
-      ].concat(this.selectList.pref[this.sendValues.provider].pref);
+      ].concat(newList);
     },
   },
   methods: {
-    /**
-     * 保持している送信する値を反映し、即時バリデーション
-     * @param name {String} - 変更対象のキー
-     * @param value {String} - 変更する値
-     */
-    changeSendValue(name, value) {
-      this.$set(this.sendValues, name, value);
-      this.validate(name);
+    registerInputField(name) {
+      this.inputFields.push(name);
     },
     /**
      * リストが変更された場合、引数で与えられたフィールドを初期化する
@@ -102,53 +68,27 @@ export default {
      * @param name {String} - 変更対象のキー
      */
     onChangeList(name) {
-      this.$set(this.sendValues, name, '');
+      this.$refs[name].initValue();
     },
     /**
-     * すべてのフィールドに対してバリデーションを呼び出す
+     * すべてのフィールドに対してバリデーションを呼び出し、強制的に値を再取得する
      * @returns {boolean} - すべてバリデーションが通れば true
      */
     validateAll() {
-      for (const name in this.sendValues) {
-        this.validate(name);
-      }
-
       let isValid = true;
-
-      for (const value of Object.values(this.validateStatus)) {
-        if (!value.isValid) isValid = false;
+      for (const index in this.inputFields) {
+        this.$refs[this.inputFields[index]].validate();
+        if (!this.$refs[this.inputFields[index]].isValid) isValid = false;
       }
-
       return isValid;
     },
     /**
-     * フィールドをバリデーションする
-     * @param key {String} - バリデーション対象のフィールド名
-     */
-    validate(key) {
-      let isValid = false;
-
-      switch (this.validateStatus[key].validateType) {
-        case 'text':
-          if (this.sendValues[key] !== '') isValid = true;
-          break;
-        case 'email':
-          if (this.sendValues[key].match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
-            isValid = true;
-          }
-          break;
-        default:
-          isValid = true;
-      }
-
-      this.$set(this.validateStatus[key], 'isValid', isValid);
-    },
-    /**
      * Submit時の処理（すべてのフィールドをバリデーションし、それが通れば送信する）
+     * todo: もしJSで送信する場合、ここでクエリを組み立ててsubmitする
      */
     onSubmit() {
       if (this.validateAll()) {
-        alert('入力エラーがないため送信します（テストゆえ送信しないため仮に表示）');
+        this.isSending = true;
       }
     },
   },

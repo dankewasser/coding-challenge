@@ -1,5 +1,5 @@
 .c-Form_RowGroup
-  .c-Form_Row.t-Error(v-if="!isValid")
+  .c-Form_Row.t-Error(v-if="isShowError")
     p.c-Form_Row_ErrorMsg
       | {{ errorMessage }}
   .c-Form_Row
@@ -7,6 +7,9 @@
       span.c-Form_Required 必須
       span(v-html="heading")
     .c-Form_InputCol
-      select.c-Form_Select(name="name", v-model="selected")
+      select.c-Form_Select(
+        name="name",
+        v-model="selected"
+      )
         option(v-for="item in list" :value="item.value") {{ item.name }}
       i.c-Form_Arrow

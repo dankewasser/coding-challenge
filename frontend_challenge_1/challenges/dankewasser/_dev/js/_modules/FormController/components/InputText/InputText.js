@@ -1,3 +1,5 @@
+import * as Functions from '../../functions/functions';
+
 /**
  * テキストフィールド
  */
@@ -9,12 +11,23 @@ export default {
     heading: String,
     placeholder: String,
     errorMessage: String,
-    currentValue: String,
-    isValid: Boolean,
+    initialValue: String,
+    validateType: String,
+  },
+  data() {
+    return {
+      currentValue: '',
+      isValid: false,
+      isShowError: false,
+    };
+  },
+  mounted() {
+    this.register();
+    this.initValue();
   },
   computed: {
     /**
-     * 入力された値
+     * 入力されている値
      */
     inputted: {
       /**
@@ -25,14 +38,39 @@ export default {
         return this.currentValue;
       },
       /**
-       * 値が変わっていたら変更を親に通知
+       * 値が変わっていたらバリデーションを呼び出す
        * @param value {string}
        */
       set(value) {
-        if (this.inputted !== value) {
-          this.$emit('change-value', this.name, value);
+        if (this.currentValue !== value) {
+          this.currentValue = value;
+          this.validate();
         }
       },
+    },
+  },
+  methods: {
+    /**
+     * 値を初期化
+     */
+    initValue() {
+      this.currentValue = this.initialValue;
+      this.isValid = false;
+      this.isShowError = false;
+    },
+    /**
+     * 自分自身の存在を親に通知
+     */
+    register() {
+      this.$emit('register', this.name);
+    },
+    /**
+     * バリデーション
+     */
+    validate() {
+      const isValid = Functions.validate(this.currentValue, this.validateType);
+      this.isValid = isValid;
+      this.isShowError = !isValid;
     },
   },
 };

@@ -10,74 +10,81 @@ form.c-Form.js-FormController_Main(@submit.prevent="onSubmit")
 
   .c-Form_Body
     Select(
+      ref="provider",
       :name="'provider'",
       :heading=`'ご契約中の<br class="u-SP">電力会社'`,
       :list="getProviderList",
       :error-message="'選択してください'",
       :child-list="'pref'",
-      :current-value="sendValues.provider",
-      :is-valid="validateStatus.provider.isValid",
-      @change-value="changeSendValue",
+      :initial-value="'tepco'",
+      :validate-type="'text'",
+      @register="registerInputField",
       @change-list="onChangeList"
     )
 
     Select(
+      ref="pref",
       :name="'pref'",
       :heading="'都道府県'",
       :list="getPrefList",
       :error-message="'選択してください'",
       :child-list="null",
-      :current-value="sendValues.pref",
-      :is-valid="validateStatus.pref.isValid",
-      @change-value="changeSendValue"
+      :initial-value="''",
+      :validate-type="'text'",
+      @register="registerInputField"
     )
 
     InputText(
+      ref="company",
       :name="'company'",
       :type="'text'",
       :heading="'貴社名'",
       :placeholder="'○○株式会社'",
       :error-message="'正しく入力してください'",
-      :current-value="sendValues.company",
-      :is-valid="validateStatus.company.isValid",
-      @change-value="changeSendValue",
+      :initial-value="''",
+      :validate-type="'text'",
+      @register="registerInputField"
     )
 
     InputText(
+      ref="name",
       :name="'name'",
       :type="'text'",
       :heading="'ご担当者'",
       :placeholder="'ご入力ください'",
       :error-message="'正しく入力してください'",
-      :current-value="sendValues.name",
-      :is-valid="validateStatus.name.isValid",
-      @change-value="changeSendValue",
+      :initial-value="''",
+      :validate-type="'text'",
+      @register="registerInputField"
     )
 
     InputText(
+      ref="phone",
       :name="'phone'",
       :type="'tel'",
       :heading="'電話番号'",
       :placeholder="'03-1234-5678'",
       :error-message="'正しく入力してください'",
-      :current-value="sendValues.phone",
-      :is-valid="validateStatus.phone.isValid",
-      @change-value="changeSendValue",
+      :initial-value="''",
+      :validate-type="'text'",
+      @register="registerInputField"
     )
 
     InputText(
+      ref="email",
       :name="'email'",
       :type="'text'",
       :heading="'メールアドレス'",
       :placeholder="'メールアドレス'",
       :error-message="'正しいメールアドレスの形式で入力してください'",
-      :current-value="sendValues.email",
-      :is-valid="validateStatus.email.isValid",
-      @change-value="changeSendValue",
+      :initial-value="''",
+      :validate-type="'email'",
+      @register="registerInputField"
     )
 
   .c-Form_BtnArea
-    button.c-Form_Btn 一括見積もりしてみる
+    button.c-Form_Btn(disabled, v-if="this.isSending") 送信中
+    button.c-Form_Btn(v-else) 一括見積もりしてみる
 
   p.c-Form_Notice
     | 利用規約・個人情報に同意の上送信ください
