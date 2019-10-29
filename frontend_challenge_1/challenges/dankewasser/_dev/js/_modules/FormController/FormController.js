@@ -59,19 +59,23 @@ export default {
     },
   },
   methods: {
+    /**
+     * 入力フィールド一覧に渡された名前を追加
+     * @param name
+     */
     registerInputField(name) {
       this.inputFields.push(name);
     },
     /**
      * リストが変更された場合、引数で与えられたフィールドを初期化する
      * （電力会社が変更される場合に都道府県を初期化するなど）
-     * @param name {String} - 変更対象のキー
+     * @param name {String} - 変更対象のコンポーネント名
      */
     onChangeList(name) {
       this.$refs[name].initValue();
     },
     /**
-     * すべてのフィールドに対してバリデーションを呼び出し、強制的に値を再取得する
+     * すべてのフィールドに対してバリデーションを呼び出し、エラーがひとつでもあるかどうかを返却
      * @returns {boolean} - すべてバリデーションが通れば true
      */
     validateAll() {

@@ -16,8 +16,17 @@ export default {
   },
   data() {
     return {
+      /**
+       * 現在の入力値
+       */
       currentValue: '',
+      /**
+       * バリデーションを通っているか否か
+       */
       isValid: false,
+      /**
+       * エラー文を表示するか否か（初期表示時はバリデーションエラーであっても非表示にしておくため）
+       */
       isShowError: false,
     };
   },
